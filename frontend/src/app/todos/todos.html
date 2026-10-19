@@ -1,0 +1,83 @@
+<main class="todos-page">
+  <header class="page-header">
+    <div>
+      <p class="eyebrow">WORKSPACE</p>
+      <h1>Todos</h1>
+    </div>
+    @if (!loading() && !error()) {
+      <p class="task-count">{{ todos().length }} {{ todos().length === 1 ? 'task' : 'tasks' }}</p>
+    }
+    <button class="primary-button" type="button" (click)="openCreateForm()" [disabled]="showCreateForm()">
+      <span aria-hidden="true">+</span> Add new todo
+    </button>
+  </header>
+
+  @if (showCreateForm()) {
+    <section class="create-todo-form" aria-label="Create new todo">
+      <h2>Create new todo</h2>
+      <form #createForm="ngForm" (ngSubmit)="createTodo()">
+        <label for="new-todo-title">Title&nbsp;</label>
+        <input
+          id="new-todo-title"
+          type="text"
+          [(ngModel)]="newTodo.title"
+          name="title"
+          required
+          [attr.aria-invalid]="createError() ? 'true' : 'false'"
+        />
+        @if (createError()) {
+          <p class="error-message" role="alert">{{ createError() }}</p>
+        }
+        <div class="form-actions">
+          <button class="primary-button" type="submit" [disabled]="createForm.invalid || creating()">
+            {{ creating() ? 'Saving…' : 'Save todo' }}
+          </button>
+          <button class="secondary-button" type="button" (click)="closeCreateForm()">Cancel</button>
+        </div>
+      </form>
+    </section>
+  }
+
+  @if (loading()) {
+    <div class="message" role="status">Loading todos...</div>
+  } @else if (error()) {
+    <section class="message error-message" role="alert">
+      <p>{{ error() }}</p>
+      <button class="retry-button" type="button" (click)="loadTodos()">Retry</button>
+    </section>
+  } @else if (todos().length === 0) {
+    <section class="message empty-message">
+      <h2>No todos yet</h2>
+      <p>New tasks will appear here.</p>
+    </section>
+  } @else {
+    <section class="todo-list" aria-label="Todo list">
+      <div class="list-heading" aria-hidden="true">
+        <span>Task</span>
+        <span>Status</span>
+      </div>
+      @for (todo of todos(); track todo.id) {
+        <article class="todo-row" [class.completed-row]="todo.isCompleted">
+          <div class="task-cell">
+            <input
+              class="completion-checkbox"
+              type="checkbox"
+              [checked]="todo.isCompleted"
+              [attr.aria-label]="todo.title + (todo.isCompleted ? ', completed' : ', not completed')"
+              disabled
+            />
+            <h2>{{ todo.title }}</h2>
+          </div>
+          <span class="status" [class.status-complete]="todo.isCompleted">
+            {{ todo.isCompleted ? 'Completed' : 'Open' }}
+          </span>
+          <div class="task-cell">
+            <button class="delete-button" type="button" [attr.aria-label]="'Delete ' + todo.title" (click)="deleteTodo(todo.id)">
+              🗑️ Delete
+            </button>
+          </div>
+        </article>
+      }
+    </section>
+  }
+</main>

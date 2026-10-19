@@ -1,12 +1,11 @@
-import { Component, signal } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { Component } from '@angular/core';
+import { TodosComponent } from './todos/todos';
 
 @Component({
-  imports: [RouterOutlet],
+  imports: [TodosComponent],
   selector: 'app-root',
   styleUrl: './app.css',
-  templateUrl: './app.html',
+  template: '<app-todos />',
 })
 export class App {
-  protected readonly title = signal('frontend');
 }
