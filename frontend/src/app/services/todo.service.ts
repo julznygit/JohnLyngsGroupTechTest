@@ -19,7 +19,7 @@ export class TodoService {
 
   // 🔍 Get a single todo by ID
   getById(id: number): Observable<Todo> {
-    return this.http.get<Todo>(`\({this.apiUrl}/\){id}`).pipe(
+    return this.http.get<Todo>(`${this.apiUrl}/${id}`).pipe(
       catchError(this.handleError)
     );
   }
